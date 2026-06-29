@@ -1,0 +1,462 @@
+"
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Hướng dẫn sử dụng Báo cáo SLA — Dành cho người dùng cuối</title>
+<link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap' rel='stylesheet'>
+<style>
+  :root {
+    --blue-dark:   #106B3C;
+    --blue-mid:     #78D64B;
+    --blue-light:  #3DBEB3;
+    --blue-xlight: #EEF6FD;
+    --amber:       #857550;
+    --amber-light: #FEF3E2;
+    --amber-border:#C8B273;
+    --red:         #FF3100;
+    --red-light:   #FDF0F0;
+    --red-border:  #F0AAAA;
+    --gray-900:    #1A1A1A;
+    --gray-700:    #3D3D3D;
+    --gray-500:    #86888A;
+    --gray-300:    #C8C8C8;
+    --gray-100:    #F5F5F5;
+    --white:       #FFFFFF;
+    --green:       #1A6B3A;
+    --green-light: #E8F5EE;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: #F0F4F9;
+    color: var(--gray-700);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    zoom: 1.1;
+  }
+  .hero { background: var(--blue-dark); position: relative; overflow: hidden; padding: 64px 0 72px; }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 20%, rgba(21, 168, 53, 0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(21, 168, 53, 0.55) 0%, transparent 60%);
+  }
+  .hero::after { content: ''; position: absolute; right: -60px; top: -60px; width: 420px; height: 420px; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 50%; }
+  .hero-inner { position: relative; max-width: 900px; margin: 0 auto; padding: 0 40px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: #60D08A; display: inline-block; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 700; color: #FFFFFF; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.02em; }
+  .hero-sub { font-size: 16px; color: rgba(255,255,255,0.55); font-weight: 300; margin-bottom: 36px; }
+  .hero-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); }
+  .hero-meta-value { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); }
+  .main { max-width: 900px; margin: 0 auto; padding: 48px 40px 80px; }
+  .alerts { display: grid; gap: 12px; margin-bottom: 48px; }
+  .alert { display: grid; grid-template-columns: 4px 1fr; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .alert-body { padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .alert-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.01em; }
+  .alert-text { font-size: 13.5px; line-height: 1.65; }
+  .alert-text strong { font-weight: 600; }
+  .alert-amber .alert-stripe { background: var(--amber-border); }
+  .alert-amber .alert-body { background: var(--amber-light); }
+  .alert-amber .alert-title { color: var(--amber); }
+  .alert-amber .alert-text { color: #7A4A10; }
+  .alert-red .alert-stripe { background: var(--red-border); }
+  .alert-red .alert-body { background: var(--red-light); }
+  .alert-red .alert-title { color: var(--red); }
+  .alert-red .alert-text { color: #6B2020; }
+  .alert-green .alert-stripe { background: var(--blue-mid); }
+  .alert-green .alert-body { background: var(--green-light); }
+  .alert-green .alert-title { color: var(--blue-dark); }
+  .alert-green .alert-text { color: #155A30; }
+  .section { margin-bottom: 52px; }
+  .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid #E2EBF3; }
+  .section-num { width: 32px; height: 32px; border-radius: 8px; background: var(--blue-dark); color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--blue-dark); letter-spacing: -0.01em; }
+  .lead { font-size: 14px; color: var(--gray-700); margin-bottom: 20px; line-height: 1.7; }
+  .lead strong { color: var(--blue-dark); font-weight: 600; }
+  .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .page-card { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+  .page-card:hover { box-shadow: 0 6px 20px rgba(12,61,110,0.10); transform: translateY(-2px); }
+  .page-card-head { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #EEF4FA; }
+  .page-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .page-name { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
+  .page-type { font-size: 11px; color: var(--gray-500); font-weight: 400; margin-top: 1px; line-height: 1.4; }
+  .page-card-body { padding: 12px 16px 14px; }
+  .page-card-body ul { list-style: none; }
+  .page-card-body li { font-size: 12.5px; color: var(--gray-500); padding: 3px 0; padding-left: 14px; position: relative; line-height: 1.5; }
+  .page-card-body li::before { content: '\00B7'; position: absolute; left: 3px; color: var(--blue-mid); font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .page-card.detail .page-icon { background: var(--gray-100); }
+  .slicer-table, .kpi-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .slicer-table thead tr, .kpi-table thead tr { background: var(--blue-dark); }
+  .slicer-table thead th, .kpi-table thead th { padding: 11px 16px; text-align: left; font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.05em; text-transform: uppercase; }
+  .slicer-table tbody tr:nth-child(odd), .kpi-table tbody tr:nth-child(odd) { background: var(--white); }
+  .slicer-table tbody tr:nth-child(even), .kpi-table tbody tr:nth-child(even) { background: var(--blue-xlight); }
+  .slicer-table tbody tr:hover, .kpi-table tbody tr:hover { background: #D6E8F7; }
+  .slicer-table td, .kpi-table td { padding: 12px 16px; font-size: 13px; vertical-align: top; border-bottom: 1px solid #EEF4FA; line-height: 1.6; }
+  .slicer-table td:first-child { font-weight: 600; color: var(--blue-dark); white-space: nowrap; }
+  .kpi-table td:first-child { font-weight: 700; color: var(--blue-dark); font-size: 12.5px; }
+  .tip { background: var(--blue-xlight); border: 1px solid #B5D4F4; border-left: 4px solid var(--blue-mid); border-radius: 0 10px 10px 0; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; font-size: 13.5px; color: var(--blue-dark); line-height: 1.65; }
+  .tip-icon { font-size: 18px; flex-shrink: 0; }
+  .tip strong { font-weight: 700; }
+  .formula { background: #0F2A1C; border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-family: 'Consolas','Courier New', monospace; font-size: 12.5px; color: #C9E8D4; line-height: 1.7; overflow-x: auto; }
+  .formula .cmt { color: #6FAE86; }
+  .formula .kw { color: #79D6A0; font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0; padding: 14px 18px; background: var(--white); border: 1px solid #DDE8F2; border-radius: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step { display: grid; grid-template-columns: 48px 1fr; position: relative; }
+  .step:not(:last-child)::before { content: ''; position: absolute; left: 23px; top: 44px; bottom: -4px; width: 1.5px; background: linear-gradient(to bottom, #B5D4F4, transparent); }
+  .step-left { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+  .step-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: white; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(12,61,110,0.25); }
+  .step-right { padding: 4px 0 28px 16px; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 5px; }
+  .step-desc { font-size: 13px; color: var(--gray-700); line-height: 1.65; }
+  .step-desc strong { font-weight: 600; color: var(--gray-900); }
+  .visual-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .visual-card { background: var(--white); border: 1px solid #DDE8F2; border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; transition: box-shadow 0.2s; }
+  .visual-card:hover { box-shadow: 0 4px 14px rgba(12,61,110,0.08); }
+  .visual-emoji { font-size: 22px; flex-shrink: 0; }
+  .visual-name { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
+  .visual-desc { font-size: 12px; color: var(--gray-500); line-height: 1.55; }
+  .nav-group { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .nav-group-title { display: inline-block; background: var(--blue-dark); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; }
+  .nav-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nav-chip { background: var(--green-light); color: var(--blue-dark); border: 1px solid #BFE3CC; font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 8px; }
+  .tag { display: inline-block; background: var(--blue-light); color: var(--blue-dark); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-left: 6px; vertical-align: middle; }
+  .vchart { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .vchart-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .vchart-emoji { font-size: 20px; }
+  .vchart-name { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
+  .vchart-row { font-size: 13px; color: var(--gray-700); line-height: 1.6; margin-top: 6px; }
+  .vchart-row b { color: var(--gray-900); font-weight: 600; }
+  footer { background: var(--blue-dark); text-align: center; padding: 28px 40px; font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.03em; }
+  footer strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+  @media print { body { background: white; } .hero { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .page-card:hover, .visual-card:hover { box-shadow: none; transform: none; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-inner > * { animation: fadeUp 0.55s ease both; }
+  .hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-inner > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-inner > *:nth-child(3) { animation-delay: 0.25s; }
+  .hero-inner > *:nth-child(4) { animation-delay: 0.35s; }
+  .main > * { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+  @media (max-width: 600px) { .main { padding: 32px 20px 60px; } .hero-inner { padding: 0 20px; } .pages-grid { grid-template-columns: 1fr; } .visual-grid { grid-template-columns: 1fr; } .hero-meta { gap: 20px; } }
+</style>
+<style>
+  .toc { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 20px 24px; margin-bottom: 40px; }
+  .toc h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--blue-dark); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; columns: 2; column-gap: 32px; }
+  .toc li { counter-increment: toc; padding: 5px 0 5px 30px; position: relative; font-size: 13.5px; break-inside: avoid; }
+  .toc li::before { content: counter(toc); position: absolute; left: 0; top: 5px; width: 20px; height: 20px; background: var(--green-light); color: var(--blue-dark); border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .toc a { color: var(--gray-700); text-decoration: none; }
+  .toc a:hover { color: var(--blue-dark); text-decoration: underline; }
+  .shot { margin: 18px 0; }
+  .shot img { width: 100%; display: block; border: 1px solid #CBD9E8; border-radius: 12px; box-shadow: 0 8px 28px rgba(12,61,110,0.12); }
+  .shot.narrow { max-width: 340px; }
+  .shot.mid { max-width: 620px; }
+  .shot-cap { font-size: 12px; color: var(--gray-500); margin-top: 8px; text-align: center; font-style: italic; }
+  .tour-legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 10px; margin-top: 16px; }
+  .tour-item { display: flex; gap: 12px; align-items: flex-start; background: var(--white); border: 1px solid #DDE8F2; border-radius: 10px; padding: 12px 14px; }
+  .tour-num { width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tour-txt b { color: var(--blue-dark); font-size: 13px; }
+  .tour-txt div { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 12px; }
+  .concept { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 16px 18px; }
+  .concept-term { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .concept-term .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .concept-def { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+  .recipe { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .recipe-q { font-size: 14.5px; font-weight: 700; color: var(--blue-dark); margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .recipe-q .qmark { background: var(--blue-dark); color: #fff; border-radius: 7px; padding: 2px 9px; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .recipe ol { list-style: none; counter-reset: rstep; }
+  .recipe ol li { counter-increment: rstep; position: relative; padding: 5px 0 5px 32px; font-size: 13px; color: var(--gray-700); line-height: 1.55; }
+  .recipe ol li::before { content: counter(rstep); position: absolute; left: 0; top: 4px; width: 22px; height: 22px; background: var(--green-light); color: var(--blue-dark); border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .kbd { display: inline-block; background: var(--gray-100); border: 1px solid #CBD3DB; border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px; font-size: 12px; font-weight: 600; color: var(--gray-900); font-family: 'Be Vietnam Pro', sans-serif; }
+  .faq-item { border-bottom: 1px solid #E2EBF3; padding: 14px 0; }
+  .faq-q { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 6px; }
+  .faq-q::before { content: 'Hỏi: '; color: var(--red); }
+  .faq-a { font-size: 13px; color: var(--gray-700); line-height: 1.65; }
+  .faq-a::before { content: 'Đáp: '; font-weight: 700; color: var(--blue-dark); }
+  .callout { display: flex; gap: 14px; align-items: flex-start; background: var(--green-light); border: 1px solid #BFE3CC; border-radius: 12px; padding: 16px 20px; margin: 18px 0; }
+  .callout .ic { font-size: 22px; flex-shrink: 0; }
+  .callout-t { font-size: 13.5px; color: #155A30; line-height: 1.65; }
+  .callout-t b { color: var(--blue-dark); }
+  @media print { .toc ol { columns: 2; } .shot img { box-shadow: none; } section, .recipe, .concept { break-inside: avoid; } }
+  @media (max-width: 600px) { .toc ol { columns: 1; } }
+</style>
+
+</head>
+<body>
+
+<header class='hero'>
+  <div class='hero-inner'>
+    <div class='hero-badge'><span></span> Power BI · CC1 · Tài liệu người dùng cuối</div>
+    <h1>Hướng dẫn sử dụng<br>Báo cáo SLA</h1>
+    <p class='hero-sub'>Cẩm nang chi tiết dành cho người dùng cuối</p>
+    <div class='hero-meta'>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Báo cáo</span><span class='hero-meta-value'>SLA Monitoring</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Nền tảng</span><span class='hero-meta-value'>Power BI</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Đối tượng</span><span class='hero-meta-value'>Toàn công ty</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Cập nhật</span><span class='hero-meta-value'>06-2026</span></div>
+    </div>
+  </div>
+</header>
+
+<main class='main'>
+
+  <div class='toc'>
+    <h3>Nội dung tài liệu</h3>
+    <ol>
+      <li><a href='#s1'>Báo cáo này là gì &amp; dùng để làm gì</a></li>
+      <li><a href='#s2'>Mở báo cáo như thế nào</a></li>
+      <li><a href='#s3'>Làm quen với màn hình</a></li>
+      <li><a href='#s4'>Những khái niệm cần biết</a></li>
+      <li><a href='#s5'>Thao tác cơ bản (từng bước)</a></li>
+      <li><a href='#s6'>Đọc hiểu các chỉ số (KPI)</a></li>
+      <li><a href='#s7'>Đọc hiểu các biểu đồ</a></li>
+      <li><a href='#s8'>Bảng chi tiết theo giai đoạn &amp; màu SLA</a></li>
+      <li><a href='#s9'>Trang Chi tiết &amp; mở hồ sơ gốc</a></li>
+      <li><a href='#s10'>Tình huống thường gặp</a></li>
+      <li><a href='#s11'>Câu hỏi thường gặp &amp; xử lý sự cố</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <section class='section' id='s1'>
+    <div class='section-head'><div class='section-num'>1</div><h2 class='section-title'>Báo cáo này là gì &amp; dùng để làm gì</h2></div>
+    <p class='lead'>Báo cáo <strong>SLA</strong> theo dõi <strong>tiến độ xử lý hồ sơ</strong> trong các quy trình phê duyệt của công ty: <b>Thanh toán, Tạm ứng, Đơn mua hàng, Yêu cầu mua hàng, Đơn bán hàng, Hợp đồng…</b> Mục tiêu là trả lời nhanh ba câu hỏi:</p>
+    <div class='concept-grid'>
+      <div class='concept'><div class='concept-term'>⏱️ Có nhanh không?</div><div class='concept-def'>Hồ sơ mất bao nhiêu ngày để xử lý xong, và có đúng hạn cam kết (SLA) hay không.</div></div>
+      <div class='concept'><div class='concept-term'>📥 Có tồn đọng không?</div><div class='concept-def'>Bao nhiêu hồ sơ còn đang chờ, đang kẹt ở phòng ban / dự án nào.</div></div>
+      <div class='concept'><div class='concept-term'>🎯 Kẹt ở đâu?</div><div class='concept-def'>Giai đoạn nào trong quy trình làm hồ sơ chậm nhất để xử lý đúng chỗ.</div></div>
+    </div>
+    <!-- <div class='callout'><span class='ic'>👥</span><div class='callout-t'><b>Bạn không cần biết Power BI để dùng báo cáo này.</b> Bạn chỉ cần biết bấm chuột. Tài liệu này hướng dẫn từng thao tác nhỏ nhất.</div></div> -->
+  </section>
+
+  <!-- 2 -->
+  <section class='section' id='s2'>
+    <div class='section-head'><div class='section-num'>2</div><h2 class='section-title'>Mở báo cáo như thế nào</h2></div>
+    <div class='steps'>
+      <div class='step'><div class='step-left'><div class='step-circle'>1</div></div><div class='step-right'><div class='step-title'>Mở đường link báo cáo</div><div class='step-desc'>Bấm vào <strong>đường link Power BI</strong> mà bộ phận triển khai gửi cho bạn (qua email hoặc Teams). Báo cáo mở thẳng trên trình duyệt web — <strong>không cần cài đặt phần mềm</strong>.</div></div></div>
+      <div class='step'><div class='step-left'><div class='step-circle'>2</div></div><div class='step-right'><div class='step-title'>Đăng nhập bằng tài khoản công ty</div><div class='step-desc'>Dùng email công ty (dạng <i>…@cc1.vn</i>) để đăng nhập nếu được yêu cầu. Bạn chỉ thấy được dữ liệu mình được cấp quyền.</div></div></div>
+      <div class='step'><div class='step-left'><div class='step-circle'>3</div></div><div class='step-right'><div class='step-title'>Chờ báo cáo tải xong</div><div class='step-desc'>Lần đầu mở có thể mất vài giây để nạp dữ liệu. Khi các con số và biểu đồ hiện đầy đủ là đã sẵn sàng.</div></div></div>
+    </div>
+    <div class='tip'><span class='tip-icon'>💡</span><span><strong>Nên dùng máy tính / màn hình lớn.</strong> Báo cáo có nhiều biểu đồ nên xem trên máy tính sẽ rõ và thao tác dễ hơn điện thoại.</span></div>
+  </section>
+
+  <!-- 3 -->
+  <section class='section' id='s3'>
+    <div class='section-head'><div class='section-num'>3</div><h2 class='section-title'>Làm quen với màn hình</h2></div>
+    <p class='lead'>Mỗi trang báo cáo chia thành các khu vực cố định. Hãy ghi nhớ 5 khu vực sau:</p>
+    <div class='shot'><img src='https://callmeglo.github.io/SLA_image/1.png' alt='Bản đồ màn hình trang Tổng quan'><div class='shot-cap'>Trang Tổng quan — các khu vực chính được đánh số</div></div>
+    <div class='tour-legend'>
+      <div class='tour-item'><div class='tour-num'>1</div><div class='tour-txt'><b>Thanh công cụ điều hướng</b><div>Góc trên bên phải. Bấm để chuyển sang loại hồ sơ cần xem; nút Trang chủ về Tổng quan, nút HDSD mở hướng dẫn.</div></div></div>
+      <div class='tour-item'><div class='tour-num'>2</div><div class='tour-txt'><b>Bảng bộ lọc (Slicer)</b><div>Cột xanh bên trái. Nơi bạn chọn khoảng thời gian, phòng ban, dự án… để lọc dữ liệu.</div></div></div>
+      <div class='tour-item'><div class='tour-num'>3</div><div class='tour-txt'><b>Thẻ chỉ số (KPI)</b><div>Các ô số lớn tóm tắt nhanh tình hình SLA theo bộ lọc đang chọn.</div></div></div>
+      <div class='tour-item'><div class='tour-num'>4</div><div class='tour-txt'><b>Vùng biểu đồ</b><div>Các biểu đồ chi tiết. Bấm vào một cột/điểm để lọc chéo các biểu đồ còn lại.</div></div></div>
+      <div class='tour-item'><div class='tour-num'>5</div><div class='tour-txt'><b>Nút Trở về</b><div>Quay lại trạng thái/trang trước đó.</div></div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class='section' id='s4'>
+    <div class='section-head'><div class='section-num'>4</div><h2 class='section-title'>Những khái niệm cần biết</h2></div>
+    <p class='lead'>Chỉ 5 khái niệm đơn giản, hiểu rồi là đọc được toàn bộ báo cáo:</p>
+    <div class='concept-grid'>
+      <div class='concept'><div class='concept-term'>📄 Hồ sơ</div><div class='concept-def'>Một yêu cầu/chứng từ đi qua quy trình duyệt (vd: một đề nghị thanh toán, một đơn mua hàng).</div></div>
+      <div class='concept'><div class='concept-term'>🧭 Giai đoạn (Stage)</div><div class='concept-def'>Các bước duyệt trong quy trình (vd: Lập hồ sơ → Trưởng phòng → Giám đốc → Đã ký). Hồ sơ đi lần lượt qua các giai đoạn để đến được bước cuối cùng (đóng hồ sơ).</div></div>
+      <div class='concept'><div class='concept-term'>⏱️ SLA (hạn xử lý)</div><div class='concept-def'>Thời gian xử lý tối đa cho mỗi giai đoạn. Hiện tại Xboss đang mặc định là <strong>3 ngày/giai đoạn</strong>.</div></div>
+      <div class='concept'><div class='concept-term'><span class='dot' style='background:#1A6B3A'></span> Đúng hạn / Trễ hạn</div><div class='concept-def'><strong>Đúng hạn:</strong> Các bước (giai đoạn) trong quy trình hồ sơ đều được xử lý đúng hạn.<br>
+                                                                                                                                                            <strong>Trễ hạn:</strong> Hồ sơ có ít nhất 1 bước bị trễ hạn (vi phạm SLA).</div></div>
+      <div class='concept'><div class='concept-term'><span class='dot' style='background:#FF3100'></span> Đóng / Chưa đóng</div><div class='concept-def'><b>Đóng:</b> hồ sơ đã đến giai đoạn duyệt cuối cùng và hoàn tất quy trình. <b>Chưa đóng:</b> vẫn còn đang trong quy trình xử lý (tồn đọng).</div></div>
+    </div>
+    <!-- <div class='callout'><span class='ic'>🚦</span><div class='callout-t'><b>Quy ước màu SLA:</b> 🟢 Trong hạn &nbsp;·&nbsp; 🟡 Gần hạn (sắp chạm 3 ngày) &nbsp;·&nbsp; 🔴 Quá hạn (vượt 3 ngày). Màu này xuất hiện ở các bảng và biểu đồ để bạn nhận biết nhanh điểm nóng.</div></div> -->
+  </section>
+
+  <!-- 5 -->
+  <section class='section' id='s5'>
+    <div class='section-head'><div class='section-num'>5</div><h2 class='section-title'>Thao tác cơ bản (từng bước)</h2></div>
+
+    <h3 style='font-family:'Playfair Display',serif;color:var(--blue-dark);font-size:16px;margin:8px 0 12px'>5.1 · Chọn khoảng thời gian</h3>
+    <div class='shot narrow'><img src='https://callmeglo.github.io/SLA_image/Bang_bo_loc.png' alt='Bảng bộ lọc bên trái'><div class='shot-cap'>Bảng bộ lọc — cột xanh bên trái</div></div>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Lọc dữ liệu theo thời gian</div>
+      <ol>
+        <div class='tip'><i>Thời gian: tính từ lúc hồ sơ được tạo lập trên hệ thống.</i></div>
+        <li>Tìm bộ lọc <strong>Thời gian</strong> ở trên cùng cột xanh.</li>
+        <li>Bấm vào ô ngày bên trái để chọn <strong>ngày bắt đầu</strong>, ô bên phải để chọn <strong>ngày kết thúc</strong>; hoặc kéo hai đầu thanh trượt.</li>
+        <li>Mọi biểu đồ và chỉ số trên trang tự cập nhật theo khoảng vừa chọn.</li>
+      </ol>
+    </div>
+
+    <h3 style='font-family:'Playfair Display',serif;color:var(--blue-dark);font-size:16px;margin:18px 0 12px'>5.2 · Chọn phòng ban / dự án / khối… (bộ lọc danh sách)</h3>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Lọc theo một hoặc nhiều giá trị</div>
+      <ol>
+        <li>Bấm vào mũi tên <span class='kbd'>⌄</span> của bộ lọc (vd: <strong>Phòng ban</strong>) để mở danh sách.</li>
+        <li>Tích chọn một hoặc <strong>nhiều</strong> giá trị cùng lúc (vd: chọn 2–3 phòng ban).</li>
+        <li>Bấm ra vùng trống để đóng danh sách. Báo cáo lọc theo lựa chọn của bạn.</li>
+      </ol>
+    </div>
+    <div class='tip'><span class='tip-icon'>🧹</span><span><strong>Đặt lại bộ lọc về mặc định:</strong> bấm nút <span class='kbd'>Trang chủ</span> trên thanh công cụ để đưa mọi bộ lọc về mặc định mà không cần tải lại báo cáo.</span></div>
+
+    <h3 style='font-family:'Playfair Display',serif;color:var(--blue-dark);font-size:16px;margin:18px 0 12px'>5.3 · Chuyển sang loại hồ sơ khác</h3>
+    <div class='shot mid'><img src='https://callmeglo.github.io/SLA_image/thanh_cong_cu.png' alt='Thanh công cụ điều hướng'><div class='shot-cap'>Thanh công cụ — gom các trang theo nhóm nghiệp vụ</div></div>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Mở trang của một loại hồ sơ</div>
+      <ol>
+        <li>Nhìn lên thanh công cụ góc trên bên phải.</li>
+        <li>Bấm vào nhóm tương ứng: <strong>XÂY LẮP</strong>, <strong>CUNG ỨNG &amp; CHỌN THẦU</strong>, <strong>TẠM ỨNG</strong> hoặc <strong>THANH TOÁN</strong>, rồi chọn trang cụ thể.</li>
+        <li>Bấm <strong>Trang chủ</strong> bất cứ lúc nào để quay về Tổng quan.</li>
+      </ol>
+    </div>
+
+    <h3 style='font-family:'Playfair Display',serif;color:var(--blue-dark);font-size:16px;margin:18px 0 12px'>5.4 · Lọc chéo bằng cách bấm vào biểu đồ</h3>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Bấm một cột để lọc các biểu đồ khác</div>
+      <ol>
+        <li>Bấm vào <strong>một cột, một phần hình tròn, hoặc một điểm</strong> trên biểu đồ (vd: cột của một phòng ban).</li>
+        <li>Tất cả biểu đồ khác trên cùng trang tự lọc theo giá trị đó.</li>
+        <li>Bấm lại vào vùng trống (hoặc bấm lại đúng chỗ đó) để <strong>bỏ lọc</strong>.</li>
+      </ol>
+    </div>
+
+    <h3 style='font-family:'Playfair Display',serif;color:var(--blue-dark);font-size:16px;margin:18px 0 12px'>5.5 · Xem chi tiết hồ sơ bằng Drill through</h3>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Mở danh sách hồ sơ của một phòng ban / dự án</div>
+      <ol>
+        <li><strong>Bấm chuột phải</strong> vào điểm dữ liệu cần xem (vd: một dự án trong biểu đồ).</li>
+        <li>Chọn <span class='kbd'>Drill through</span> → chọn trang <strong>Chi tiết</strong>.</li>
+        <li>Báo cáo chuyển sang trang Chi tiết và <strong>tự lọc đúng giá trị</strong> bạn vừa chọn.</li>
+        <li>Bấm <strong>Trở về</strong> để quay lại trang trước.</li>
+      </ol>
+    </div>
+
+    <div class='callout'><span class='ic'>🖱️</span><div class='callout-t'>Khi rê chuột lên một cột/điểm bất kỳ, một <b>chú giải (tooltip)</b> sẽ hiện ra con số cụ thể. Đây là cách nhanh nhất để đọc giá trị chính xác.</div></div>
+  </section>
+
+  <!-- 6 -->
+  <section class='section' id='s6'>
+    <div class='section-head'><div class='section-num'>6</div><h2 class='section-title'>Đọc hiểu các chỉ số (KPI)</h2></div>
+    <div class='shot mid'><img src='https://callmeglo.github.io/SLA_image/KPI_cards.png' alt='Các thẻ KPI'><div class='shot-cap'>Dải thẻ KPI ở đầu trang Tổng quan</div></div>
+    <table class='kpi-table'>
+      <thead><tr><th>Chỉ số</th><th>Ý nghĩa đơn giản</th></tr></thead>
+      <tbody>
+        <tr><td>Tổng số lượng hồ sơ</td><td>Tổng số hồ sơ trong phạm vi đang lọc.</td></tr>
+        <tr><td>Thời gian xử lý TB</td><td>Trung bình mỗi hồ sơ mất bao nhiêu ngày để xử lý.</td></tr>
+        <tr><td>SLA Compliance Rate</td><td>Tỷ lệ hồ sơ xử lý <b>đúng hạn</b> (tính trên tổng số HS đã đóng). Càng cao càng tốt.</td></tr>
+        <tr><td>Avg Cycle Time</td><td>Thời gian xử lý trung bình, tính riêng trên hồ sơ <b>đã đóng</b>.</td></tr>
+        <tr><td>Breach Count</td><td>Số hồ sơ <b>đã đóng nhưng trễ hạn</b>.</td></tr>
+        <tr><td>Pending &gt; SLA</td><td>Số hồ sơ <b>chưa đóng và đã quá hạn</b> — cần xử lý ngay.</td></tr>
+      </tbody>
+    </table>
+    <div class='callout'><span class='ic'>📌</span><div class='callout-t'><b>Hai chỉ số cần để mắt nhất:</b> <i>SLA Compliance Rate</i> (đo sức khỏe SLA tổng thể) và <i>Pending &gt; SLA</i> (cảnh báo hồ sơ đang trễ cần can thiệp).</div></div>
+  </section>
+
+  <!-- 7 -->
+  <section class='section' id='s7'>
+    <div class='section-head'><div class='section-num'>7</div><h2 class='section-title'>Đọc hiểu các biểu đồ</h2></div>
+    <div class='shot mid'><img src='https://callmeglo.github.io/SLA_image/Bieu_doo.png' alt='Biểu đồ tròn và đường'><div class='shot-cap'>Ví dụ biểu đồ tròn (tỷ lệ đóng/chưa đóng) và đường (xu hướng theo thời gian)</div></div>
+    <div class='visual-grid'>
+      <div class='visual-card'><div class='visual-emoji'>🥧</div><div><div class='visual-name'>Biểu đồ tròn</div><div class='visual-desc'>Tỷ lệ hồ sơ Đóng so với Chưa đóng. Nhìn nhanh mức tồn đọng.</div></div></div>
+      <div class='visual-card'><div class='visual-emoji'>📊</div><div><div class='visual-name'>Biểu đồ cột/thanh</div><div class='visual-desc'>So sánh, xếp hạng. Thanh càng dài = thời gian xử lý lâu hơn / số lượng nhiều hơn.</div></div></div>
+      <div class='visual-card'><div class='visual-emoji'>📈</div><div><div class='visual-name'>Biểu đồ đường</div><div class='visual-desc'>Xu hướng theo tháng/quý. Đường đi lên = đang xấu đi, cần chú ý.</div></div></div>
+      <div class='visual-card'><div class='visual-emoji'>📉</div><div><div class='visual-name'>Biểu đồ kết hợp</div><div class='visual-desc'>Cột (số lượng) + đường (thời gian/tỷ lệ) để xem hai chiều cùng lúc.</div></div></div>
+    </div>
+    <!-- <div class='tip'><span class='tip-icon'>💡</span><span>Không cần nhớ tên biểu đồ. Chỉ cần nhớ: <strong>rê chuột để xem số</strong>, <strong>bấm để lọc chéo</strong>, <strong>thanh dài/đường lên = cần chú ý</strong>.</span></div> -->
+  </section>
+
+  <!-- 8 -->
+  <section class='section' id='s8'>
+    <div class='section-head'><div class='section-num'>8</div><h2 class='section-title'>Bảng chi tiết theo giai đoạn &amp; màu SLA</h2></div>
+    <p class='lead'>Trên mỗi trang loại hồ sơ có bảng <strong>chi tiết theo giai đoạn</strong>, tách quy trình thành từng bước kèm số lượng hồ sơ, thời gian xử lý TB (tính theo số ngày & số giờ). Các ô được tô màu theo mức độ trễ:</p>
+    <div class='shot mid'><img src='https://callmeglo.github.io/SLA_image/detail_table.png' alt='Bảng pivot theo giai đoạn với màu SLA'><div class='shot-cap'>Ô càng đỏ đậm = giai đoạn đó càng mất nhiều thời gian (nút thắt)</div></div>
+    <div class='legend'>
+      <div class='legend-item'><span class='legend-dot' style='background:#FFFFFF;border:1px solid #DDD'></span>Trắng/nhạt — trong hạn</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#FBB'></span>Hồng/cam — tiến gần hạn</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#FF3100'></span>Đỏ đậm — giai đoạn kẹt lâu nhất</div>
+    </div>
+    <div class='callout'><span class='ic'>🔍</span><div class='callout-t'><b>Mẹo tìm điểm kẹt:</b> nhìn cột 'Số ngày TB', giai đoạn nào có ô đỏ đậm nhất chính là nơi hồ sơ bị ứ đọng lâu nhất trong quy trình — ưu tiên xử lý ở đó.</div></div>
+  </section>
+
+  <!-- 9 -->
+  <section class='section' id='s9'>
+    <div class='section-head'><div class='section-num'>9</div><h2 class='section-title'>Trang Chi tiết &amp; mở hồ sơ gốc</h2></div>
+    <div class='shot'><img src='https://callmeglo.github.io/SLA_image/trang_chi_tiet.png' alt='Trang Chi tiết - bảng tra cứu hồ sơ'><div class='shot-cap'>Trang Chi tiết — tra cứu từng hồ sơ và mở link trên hệ thống ERP</div></div>
+    <p class='lead'>Trang <strong>Chi tiết</strong> liệt kê từng hồ sơ cụ thể: <strong>Mã approval</strong>, <strong>Mô tả</strong>, <strong>Nhóm workflow</strong>, <strong>Giai đoạn hiện tại</strong> và <strong>Link đến Odoo/Xboss</strong>. Dùng tính năng <span class='kbd'>Drill through</span> đã đề cập trên mục 5.5 để xem Trang chi tiết cho các hồ sơ được chọn.</p>
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Cách làm</span> Mở hồ sơ gốc trên hệ thống ERP</div>
+      <ol>
+        <li>Tìm hồ sơ cần xem trong bảng (có thể dùng bộ lọc để thu hẹp).</li>
+        <li>Bấm biểu tượng <strong>Link</strong> ở cột cuối để mở hồ sơ gốc trên Odoo/Xboss.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class='section' id='s10'>
+    <div class='section-head'><div class='section-num'>10</div><h2 class='section-title'>Tình huống thường gặp</h2></div>
+
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Tôi muốn</span> biết phòng ban nào xử lý chậm nhất tháng này</div>
+      <ol>
+        <li>Vào <strong>Trang chủ (Tổng quan)</strong>.</li>
+        <li>Đặt bộ lọc <strong>Thời gian</strong> về tháng cần xem.</li>
+        <li>Xem biểu đồ <strong>Thời gian xử lý TB theo phòng ban</strong> (vào trang loại hồ sơ tương ứng) — thanh dài nhất là phòng ban chậm nhất.</li>
+      </ol>
+    </div>
+
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Tôi muốn</span> xem toàn bộ hồ sơ còn tồn của một dự án</div>
+      <ol>
+        <li>Chọn bộ lọc <strong>Dự án</strong> = dự án cần xem.</li>
+        <li>Bấm chuột phải vào dự án đó trong biểu đồ → <span class='kbd'>Drill through</span> → trang <strong>Chi tiết</strong>.</li>
+        <li>Lọc thêm trạng thái <strong>Chưa đóng</strong> nếu cần, rồi mở từng hồ sơ qua cột Link.</li>
+      </ol>
+    </div>
+
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Tôi muốn</span> biết quy trình bị kẹt ở bước nào</div>
+      <ol>
+        <li>Mở trang loại hồ sơ tương ứng (vd: Thanh toán).</li>
+        <li>Xem bảng <strong>chi tiết theo giai đoạn</strong>.</li>
+        <li>Giai đoạn có ô <strong>đỏ đậm nhất</strong> ở cột Số ngày TB là nút thắt cần xử lý.</li>
+      </ol>
+    </div>
+
+    <div class='recipe'>
+      <div class='recipe-q'><span class='qmark'>Tôi muốn</span> so sánh nhiều phòng ban cùng lúc</div>
+      <ol>
+        <li>Mở bộ lọc <strong>Phòng ban</strong>.</li>
+        <li>Tích chọn <strong>nhiều phòng ban</strong> cần so sánh.</li>
+        <li>Đọc các biểu đồ — chúng chỉ còn hiển thị các phòng ban đã chọn.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class='section' id='s11'>
+    <div class='section-head'><div class='section-num'>11</div><h2 class='section-title'>Câu hỏi thường gặp &amp; xử lý sự cố</h2></div>
+    <div class='faq-item'><div class='faq-q'>Biểu đồ trống / không có dữ liệu?</div><div class='faq-a'>Thường do bộ lọc đang quá hẹp. Bấm <span class='kbd'>Trang chủ</span> để đưa về mặc định rồi thử lại.</div></div>
+    <div class='faq-item'><div class='faq-q'>Tôi lỡ bấm nhầm và biểu đồ bị lọc kỳ lạ?</div><div class='faq-a'>Bấm vào vùng trống của biểu đồ để bỏ lọc chéo, hoặc bấm <span class='kbd'>Trang chủ</span> / <strong>Trở về</strong>.</div></div>
+    <div class='faq-item'><div class='faq-q'>Con số trên báo cáo có phải số cuối cùng?</div><div class='faq-a'>Báo cáo chạy trên dữ liệu thực (PRODUCTION) và cập nhật theo lịch làm mới. Con số phản ánh thời điểm làm mới gần nhất.</div></div>
+    <div class='faq-item'><div class='faq-q'>Vì sao tổng hồ sơ ở đây khác hệ thống gốc một chút?</div><div class='faq-a'>Báo cáo đã <strong>loại trừ các hồ sơ log bị lỗi</strong> (không phản ánh thực tế xử lý) khỏi mọi phép tính SLA.</div></div>
+    <div class='faq-item'><div class='faq-q'>Tôi không thấy phòng ban / dự án của mình?</div><div class='faq-a'>Có thể do các bộ lọc đang bị chèn lên nhau hoặc thông tin trên hồ sơ gốc không điền đầy đủ thông tin phòng ban. Kiểm tra lại bộ lọc và hồ sơ gốc trên ERP; nếu vẫn không thấy, liên hệ bộ phận triển khai báo cáo.</div></div>
+    <div class='faq-item'><div class='faq-q'>Ngưỡng SLA 3 ngày áp cho tất cả các bước?</div><div class='faq-a'>Thực tế quy trình lõi tiêu chuẩn (Business Logic), thời gian xử lý trong mỗi bước sẽ được quy định khác nhau.<br> Tuy nhiên, hiện tại hệ thống ERP cấu hình thời gian xử lý chung là 3 ngày cho tất cả các quy trình.</div></div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>CC1 — Tổng công ty Xây dựng số 1 — CTCP</strong><br>
+  Hướng dẫn sử dụng Báo cáo SLA dành cho người dùng cuối · Power BI · 2026
+</footer>
+
+</body>
+</html>
+"

@@ -270,8 +270,18 @@
       <div class="concept"><div class="concept-term">📄 Hồ sơ</div><div class="concept-def">Một yêu cầu/chứng từ đi qua quy trình duyệt (vd: một đề nghị thanh toán, một đơn mua hàng).</div></div>
       <div class="concept"><div class="concept-term">🧭 Giai đoạn (Stage)</div><div class="concept-def">Các bước duyệt trong quy trình (vd: Lập hồ sơ → Trưởng phòng → Giám đốc → Đã ký). Hồ sơ đi lần lượt qua các giai đoạn để đến được bước cuối cùng (đóng hồ sơ).</div></div>
       <div class="concept"><div class="concept-term">⏱️ SLA (hạn xử lý)</div><div class="concept-def">Thời gian xử lý tối đa cho mỗi giai đoạn. Hiện tại Xboss đang mặc định là <strong>3 ngày/giai đoạn</strong>.</div></div>
-      <div class="concept"><div class="concept-term"><span class="dot" style="background:#1A6B3A"></span> Đúng hạn / Trễ hạn</div><div class="concept-def"><strong>Đúng hạn:</strong> Các bước (giai đoạn) trong quy trình hồ sơ đều được xử lý đúng hạn.<br>
-                                                                                                                                                            <strong>Trễ hạn:</strong> Hồ sơ có ít nhất 1 bước bị trễ hạn (vi phạm SLA).</div></div>
+      <div class="concept"><div class="concept-term"><span class="dot" style="background:#1A6B3A"></span> Đúng hạn / Trễ hạn (1 phần)</div>
+      <div class="concept-def">
+        <strong>Đúng hạn:</strong> Các bước (giai đoạn) trong quy trình hồ sơ đều được xử lý đúng hạn.<br>
+        <strong>Trễ hạn:</strong> Hồ sơ có ít nhất 1 bước bị trễ hạn (vi phạm SLA).</div>
+      </div>
+
+      <div class="concept"><div class="concept-term"><span class="dot" style="background:#1A6B3A"></span> Đúng hạn / Trễ hạn (toàn quy trình)</div>
+      <div class="concept-def">
+        <strong>Đúng hạn:</strong> Tổng thời gian xử lý hồ sơ không vượt quá thời hạn SLA của toàn bộ quy trình.<br>
+        <strong>Trễ hạn:</strong> Tổng thời gian xử lý hồ sơ vượt quá thời hạn SLA của toàn bộ quy trình.
+      </div></div>
+
       <div class="concept"><div class="concept-term"><span class="dot" style="background:#FF3100"></span> Đóng / Chưa đóng</div><div class="concept-def"><b>Đóng:</b> hồ sơ đã đến giai đoạn duyệt cuối cùng và hoàn tất quy trình. <b>Chưa đóng:</b> vẫn còn đang trong quy trình xử lý (tồn đọng).</div></div>
     </div>
     <!-- <div class="callout"><span class="ic">🚦</span><div class="callout-t"><b>Quy ước màu SLA:</b> 🟢 Trong hạn &nbsp;·&nbsp; 🟡 Gần hạn (sắp chạm 3 ngày) &nbsp;·&nbsp; 🔴 Quá hạn (vượt 3 ngày). Màu này xuất hiện ở các bảng và biểu đồ để bạn nhận biết nhanh điểm nóng.</div></div> -->
@@ -350,8 +360,10 @@
         <tr><td>Thời gian xử lý TB</td><td>Trung bình mỗi hồ sơ mất bao nhiêu ngày để xử lý.</td></tr>
         <tr><td>SLA Compliance Rate</td><td>Tỷ lệ hồ sơ xử lý <b>đúng hạn</b> (tính trên tổng số HS đã đóng). Càng cao càng tốt.</td></tr>
         <tr><td>Avg Cycle Time</td><td>Thời gian xử lý trung bình, tính riêng trên hồ sơ <b>đã đóng</b>.</td></tr>
-        <tr><td>Breach Count</td><td>Số hồ sơ <b>đã đóng nhưng trễ hạn</b>.</td></tr>
-        <tr><td>Pending &gt; SLA</td><td>Số hồ sơ <b>chưa đóng và đã quá hạn</b> — cần xử lý ngay.</td></tr>
+        <tr><td>Breach Count</td><td>Số hồ sơ <b>đã đóng nhưng trễ hạn toàn quy trình</b>.</td></tr>
+        <tr><td>Pending &gt; SLA (toàn phần)</td><td>Số hồ sơ <b>chưa đóng và đã quá hạn toàn quy trình</b> — cần xử lý ngay.</td></tr>
+        <tr><td>Pending &gt; SLA (1 phần)</td><td>Số hồ sơ <b>chưa đóng và có ít nhất 1 bước đã quá hạn</b> — cần quan sát để can thiệp.</td></tr>
+
       </tbody>
     </table>
     <div class="callout"><span class="ic">📌</span><div class="callout-t"><b>Hai chỉ số cần để mắt nhất:</b> <i>SLA Compliance Rate</i> (đo sức khỏe SLA tổng thể) và <i>Pending &gt; SLA</i> (cảnh báo hồ sơ đang trễ cần can thiệp).</div></div>

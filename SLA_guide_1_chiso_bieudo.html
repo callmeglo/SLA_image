@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Dien giai chi so va bieu do - Bao cao SLA</title>
+<link href='https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap' rel='stylesheet'>
+<style>
+  :root {
+    --blue-dark:   #106B3C;
+    --blue-mid:     #78D64B;
+    --blue-light:  #3DBEB3;
+    --blue-xlight: #EEF6FD;
+    --amber:       #857550;
+    --amber-light: #FEF3E2;
+    --amber-border:#C8B273;
+    --red:         #FF3100;
+    --red-light:   #FDF0F0;
+    --red-border:  #F0AAAA;
+    --gray-900:    #1A1A1A;
+    --gray-700:    #3D3D3D;
+    --gray-500:    #86888A;
+    --gray-300:    #C8C8C8;
+    --gray-100:    #F5F5F5;
+    --white:       #FFFFFF;
+    --green:       #1A6B3A;
+    --green-light: #E8F5EE;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: #F0F4F9;
+    color: var(--gray-700);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    zoom: 1.1;
+  }
+  .hero { background: var(--blue-dark); position: relative; overflow: hidden; padding: 64px 0 72px; }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 20%, rgba(21, 168, 53, 0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(21, 168, 53, 0.55) 0%, transparent 60%);
+  }
+  .hero::after { content: ''; position: absolute; right: -60px; top: -60px; width: 420px; height: 420px; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 50%; }
+  .hero-inner { position: relative; max-width: 900px; margin: 0 auto; padding: 0 40px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: #60D08A; display: inline-block; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 700; color: #FFFFFF; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.02em; }
+  .hero-sub { font-size: 16px; color: rgba(255,255,255,0.55); font-weight: 300; margin-bottom: 36px; }
+  .hero-meta { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); }
+  .hero-meta-value { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); }
+  .main { max-width: 900px; margin: 0 auto; padding: 48px 40px 80px; }
+  .alerts { display: grid; gap: 12px; margin-bottom: 48px; }
+  .alert { display: grid; grid-template-columns: 4px 1fr; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .alert-body { padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .alert-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.01em; }
+  .alert-text { font-size: 13.5px; line-height: 1.65; }
+  .alert-text strong { font-weight: 600; }
+  .alert-amber .alert-stripe { background: var(--amber-border); }
+  .alert-amber .alert-body { background: var(--amber-light); }
+  .alert-amber .alert-title { color: var(--amber); }
+  .alert-amber .alert-text { color: #7A4A10; }
+  .alert-red .alert-stripe { background: var(--red-border); }
+  .alert-red .alert-body { background: var(--red-light); }
+  .alert-red .alert-title { color: var(--red); }
+  .alert-red .alert-text { color: #6B2020; }
+  .alert-green .alert-stripe { background: var(--blue-mid); }
+  .alert-green .alert-body { background: var(--green-light); }
+  .alert-green .alert-title { color: var(--blue-dark); }
+  .alert-green .alert-text { color: #155A30; }
+  .section { margin-bottom: 52px; }
+  .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid #E2EBF3; }
+  .section-num { width: 32px; height: 32px; border-radius: 8px; background: var(--blue-dark); color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--blue-dark); letter-spacing: -0.01em; }
+  .lead { font-size: 14px; color: var(--gray-700); margin-bottom: 20px; line-height: 1.7; }
+  .lead strong { color: var(--blue-dark); font-weight: 600; }
+  .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .page-card { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+  .page-card:hover { box-shadow: 0 6px 20px rgba(12,61,110,0.10); transform: translateY(-2px); }
+  .page-card-head { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #EEF4FA; }
+  .page-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--blue-xlight); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .page-name { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
+  .page-type { font-size: 11px; color: var(--gray-500); font-weight: 400; margin-top: 1px; line-height: 1.4; }
+  .page-card-body { padding: 12px 16px 14px; }
+  .page-card-body ul { list-style: none; }
+  .page-card-body li { font-size: 12.5px; color: var(--gray-500); padding: 3px 0; padding-left: 14px; position: relative; line-height: 1.5; }
+  .page-card-body li::before { content: '\00B7'; position: absolute; left: 3px; color: var(--blue-mid); font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .page-card.detail .page-icon { background: var(--gray-100); }
+  .slicer-table, .kpi-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .slicer-table thead tr, .kpi-table thead tr { background: var(--blue-dark); }
+  .slicer-table thead th, .kpi-table thead th { padding: 11px 16px; text-align: left; font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.05em; text-transform: uppercase; }
+  .slicer-table tbody tr:nth-child(odd), .kpi-table tbody tr:nth-child(odd) { background: var(--white); }
+  .slicer-table tbody tr:nth-child(even), .kpi-table tbody tr:nth-child(even) { background: var(--blue-xlight); }
+  .slicer-table tbody tr:hover, .kpi-table tbody tr:hover { background: #D6E8F7; }
+  .slicer-table td, .kpi-table td { padding: 12px 16px; font-size: 13px; vertical-align: top; border-bottom: 1px solid #EEF4FA; line-height: 1.6; }
+  .slicer-table td:first-child { font-weight: 600; color: var(--blue-dark); white-space: nowrap; }
+  .kpi-table td:first-child { font-weight: 700; color: var(--blue-dark); font-size: 12.5px; }
+  .tip { background: var(--blue-xlight); border: 1px solid #B5D4F4; border-left: 4px solid var(--blue-mid); border-radius: 0 10px 10px 0; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; font-size: 13.5px; color: var(--blue-dark); line-height: 1.65; }
+  .tip-icon { font-size: 18px; flex-shrink: 0; }
+  .tip strong { font-weight: 700; }
+  .formula { background: #0F2A1C; border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-family: 'Consolas','Courier New', monospace; font-size: 12.5px; color: #C9E8D4; line-height: 1.7; overflow-x: auto; }
+  .formula .cmt { color: #6FAE86; }
+  .formula .kw { color: #79D6A0; font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0; padding: 14px 18px; background: var(--white); border: 1px solid #DDE8F2; border-radius: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
+  .legend-dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step { display: grid; grid-template-columns: 48px 1fr; position: relative; }
+  .step:not(:last-child)::before { content: ''; position: absolute; left: 23px; top: 44px; bottom: -4px; width: 1.5px; background: linear-gradient(to bottom, #B5D4F4, transparent); }
+  .step-left { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+  .step-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: white; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(12,61,110,0.25); }
+  .step-right { padding: 4px 0 28px 16px; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--blue-dark); margin-bottom: 5px; }
+  .step-desc { font-size: 13px; color: var(--gray-700); line-height: 1.65; }
+  .step-desc strong { font-weight: 600; color: var(--gray-900); }
+  .visual-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .visual-card { background: var(--white); border: 1px solid #DDE8F2; border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; transition: box-shadow 0.2s; }
+  .visual-card:hover { box-shadow: 0 4px 14px rgba(12,61,110,0.08); }
+  .visual-emoji { font-size: 22px; flex-shrink: 0; }
+  .visual-name { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
+  .visual-desc { font-size: 12px; color: var(--gray-500); line-height: 1.55; }
+  .nav-group { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+  .nav-group-title { display: inline-block; background: var(--blue-dark); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; }
+  .nav-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nav-chip { background: var(--green-light); color: var(--blue-dark); border: 1px solid #BFE3CC; font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 8px; }
+  .tag { display: inline-block; background: var(--blue-light); color: var(--blue-dark); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-left: 6px; vertical-align: middle; }
+  .vchart { background: var(--white); border: 1px solid #DDE8F2; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .vchart-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .vchart-emoji { font-size: 20px; }
+  .vchart-name { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
+  .vchart-row { font-size: 13px; color: var(--gray-700); line-height: 1.6; margin-top: 6px; }
+  .vchart-row b { color: var(--gray-900); font-weight: 600; }
+  footer { background: var(--blue-dark); text-align: center; padding: 28px 40px; font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.03em; }
+  footer strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+  @media print { body { background: white; } .hero { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .page-card:hover, .visual-card:hover { box-shadow: none; transform: none; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-inner > * { animation: fadeUp 0.55s ease both; }
+  .hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-inner > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-inner > *:nth-child(3) { animation-delay: 0.25s; }
+  .hero-inner > *:nth-child(4) { animation-delay: 0.35s; }
+  .main > * { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+  @media (max-width: 600px) { .main { padding: 32px 20px 60px; } .hero-inner { padding: 0 20px; } .pages-grid { grid-template-columns: 1fr; } .visual-grid { grid-template-columns: 1fr; } .hero-meta { gap: 20px; } }
+</style>
+
+</head>
+<body>
+
+<header class='hero'>
+  <div class='hero-inner'>
+    <div class='hero-badge'><span></span> Power BI · CC1 · Tài liệu 1/2</div>
+    <h1>Diễn giải chỉ số<br>&amp; biểu đồ Báo cáo SLA</h1>
+    <p class='hero-sub'><i>SLA_final.pbix</i> · Giải thích ý nghĩa từng chỉ số, biểu đồ và giá trị phân tích</p>
+    <div class='hero-meta'>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Hệ thống</span><span class='hero-meta-value'>Power BI</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Môi trường</span><span class='hero-meta-value'>PRODUCTION</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Loại tài liệu</span><span class='hero-meta-value'>Diễn giải chỉ số</span></div>
+      <div class='hero-meta-item'><span class='hero-meta-label'>Cập nhật</span><span class='hero-meta-value'>06-2026</span></div>
+    </div>
+  </div>
+</header>
+
+<main class='main'>
+
+  <div class='alerts'>
+    <div class='alert alert-amber'>
+      <div class='alert-stripe'></div>
+      <div class='alert-body'>
+        <div class='alert-icon'>⚠️</div>
+        <div class='alert-content'>
+          <div class='alert-title'>Môi trường kết nối: PRODUCTION</div>
+          <div class='alert-text'>Báo cáo kết nối trực tiếp đến dữ liệu thực trên môi trường <strong>PRODUCTION</strong>. Các con số thay đổi theo thời gian thực.</div>
+        </div>
+      </div>
+    </div>
+    <div class='alert alert-red'>
+      <div class='alert-stripe'></div>
+      <div class='alert-body'>
+        <div class='alert-icon'>🚫</div>
+        <div class='alert-content'>
+          <div class='alert-title'>Dữ liệu đã loại trừ</div>
+          <div class='alert-text'>Đã loại bỏ <strong>" & FORMAT([#count_log_approvals], "#,##0") & " hồ sơ log bị lỗi</strong> (<i>approval[is_Error] = “Có”</i>) khỏi toàn bộ tính toán. Những hồ sơ này không phản ánh thực tế xử lý và không được tính vào các chỉ số SLA.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. MO HINH DU LIEU -->
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>1</div><h2 class='section-title'>Mô hình dữ liệu &amp; vòng đời hồ sơ</h2></div>
+    <p class='lead'>Mỗi <strong>hồ sơ (approval)</strong> đi qua nhiều <strong>giai đoạn duyệt (workflow)</strong>. Mỗi lần một giai đoạn được xử lý sẽ sinh ra một dòng <strong>nhật ký (approval_log)</strong> ghi lại số ngày/giờ nằm tại giai đoạn đó. Toàn bộ chỉ số SLA được tính trên dữ liệu nhật ký này.</p>
+    <table class='kpi-table'>
+      <thead><tr><th>Trạng thái</th><th>Cột dữ liệu</th><th>Giá trị &amp; ý nghĩa</th></tr></thead>
+      <tbody>
+        <tr><td>Đóng / Chưa đóng</td><td>workflow[is_end]</td><td><i>Đóng</i> = hồ sơ đã hoàn tất quy trình; <i>Không</i> = còn đang chờ xử lý/phê duyệt (hồ sơ chưa đóng).</td></tr>
+        <tr><td>Đúng hạn / Trễ hạn (1 phần)</td><td>approval[is_delay]</td><td><i>Có</i> = hồ sơ có ít nhất 1 bước bị trễ hạn (vi phạm SLA); <br><i>Không</i> = các bước được xử lý đúng hạn.</td></tr>
+        <tr><td>Đúng hạn / Trễ hạn (toàn quy trình)</td><td>approval[is_delay_overall]</td><td><i>Có</i> = tổng thời gian xử lý hồ sơ vượt quá thời hạn SLA của toàn bộ quy trình (vi phạm SLA);<br><i>Không</i> = tổng thời gian xử lý hồ sơ không vượt quá thời hạn SLA.</td></tr>
+        <tr><td>Hồ sơ lỗi</td><td>approval[is_Error]</td><td><i>Có</i> = log bị lỗi dữ liệu → <strong>bị loại trừ</strong> khỏi mọi phép tính.</td></tr>
+        <tr><td>Nhóm quy trình</td><td>Front Office / Back Office / Payment</td><td>Phân nhóm bản chất xử lý của hồ sơ, dùng để so sánh khối lượng giữa các khâu.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 2. KHUNG SLA
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>2</div><h2 class='section-title'>Khung SLA &amp; cách tính trạng thái</h2></div>
+    <p class='lead'>Ngưỡng SLA mặc định là <strong>3 ngày cho mỗi giai đoạn</strong> (<i>max_days = 3</i>). Mỗi giai đoạn được so sánh thời gian xử lý thực tế với ngưỡng này thông qua <strong>tỉ lệ SLA</strong>:</p>
+    <div class='formula'>
+<span class='cmt'>// Tỷ lệ SLA của một giai đoạn</span><br>
+SLA_ratio = <span class='kw'>DIVIDE</span>( [#avg_days(approval_log)] , 3 )<br><br>
+<span class='cmt'>// Trạng thái hiển thị theo tỷ lệ</span><br>
+SLA Status =<br>
+  <span class='kw'>IF</span>( ratio &gt; 1 , “🔴 Quá hạn” ,<br>
+  <span class='kw'>IF</span>( ratio &gt;= 0.8 , “🟡 Gần hạn” ,<br>
+  “🟢 Trong hạn” ))
+    </div>
+    <div class='legend'>
+      <div class='legend-item'><span class='legend-dot' style='background:#1A6B3A'></span><strong>🟢 Trong hạn</strong> – tỉ lệ &lt; 0.8 (dưới 2.4 ngày/giai đoạn)</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#E8B100'></span><strong>🟡 Gần hạn</strong> – tỉ lệ 0.8 – 1.0</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#FF3100'></span><strong>🔴 Quá hạn</strong> – tỉ lệ &gt; 1.0 (vượt 3 ngày)</div>
+    </div>
+    <div class='tip'><span class='tip-icon'>💡</span><span>Ngưỡng 3 ngày được đặt cố định trong measure. Khi muốn điều chỉnh SLA, chỉ cần sửa giá trị <strong>max_days</strong> trong các measure <i>SLA_ratio, is_overdue, delay_days, Count_Gan_Han</i> – toàn bộ màu sắc và cảnh báo sẽ cập nhật theo.</span></div>
+  </section> -->
+
+  <!-- 3. KPI -->
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>2</div><h2 class='section-title'>Bộ chỉ số KPI (thẻ Card)</h2></div>
+    <p class='lead'>Các thẻ KPI ở đầu trang <strong>Tổng quan</strong> và các trang chi tiết. Tất cả đều tự động cập nhật theo bộ lọc đang chọn.</p>
+    <table class='kpi-table'>
+      <thead><tr><th>Chỉ số</th><th>Ý nghĩa / cách tính</th><th>Giá trị sử dụng</th></tr></thead>
+      <tbody>
+        <tr><td>Tổng số lượng hồ sơ</td><td>Số hồ sơ (approval) trong phạm vi lọc.</td><td>Quy mô khối lượng công việc đang theo dõi.</td></tr>
+        <tr><td>Thời gian xử lý TB (ngày)</td><td>Số ngày trung bình từ lúc tạo đến khi quy trình hoàn tất.</td><td>Đo tốc độ xử lý tổng thể.</td></tr>
+        <tr><td>SLA Compliance Rate</td><td><i>Tỷ lệ hồ sơ xử lý đúng hạn</i> = số hồ sơ xử lý đúng hạn / tổng hồ sơ.</td><td>Sức khỏe SLA tổng thể – càng cao càng tốt.</td></tr>
+        <tr><td>Avg Cycle Time</td><td>Thời gian xử lý TB tính <strong>riêng trên những hồ sơ đã đóng</strong>.</td><td>TB thời gian hoàn thành thực tế của hồ sơ đã xong.</td></tr>
+        <tr><td>Breach Count</td><td><i>breach_count_rate</i> = hồ sơ đã đóng nhưng trễ hạn / <strong>số hồ sơ đã đóng</strong>.</td><td>Tỷ lệ vi phạm SLA ở những hồ sơ đã hoàn tất.</td></tr>
+        <tr><td>Pending &gt; SLA</td><td><i>pending_and_delay_approval_rate</i> = hồ sơ chưa đóng nhưng đã quá hạn / <strong>số hồ sơ chưa đóng</strong>.</td><td>Cảnh báo tồn đọng đang trễ – cần xử lý ngay.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4. BIEU DO -->
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>3</div><h2 class='section-title'>Biểu đồ &amp; cách đọc</h2></div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>🪨</span><span class='vchart-name'>Pie – Số lượng hồ sơ chưa đóng</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Tỷ lệ hồ sơ <strong>Đóng</strong> so với <strong>Không đóng</strong>.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Nhìn nhanh mức độ tồn đọng của từng loại hồ sơ.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>📊</span><span class='vchart-name'>Combo – Số lượng hồ sơ &amp; Tỷ lệ HS đúng hạn theo thời gian</span><span class='tag'>Tổng quan</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Cột = số lượng hồ sơ mỗi tháng; đường = SLA Compliance Rate.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Phát hiện tháng cao điểm khối lượng và những giai đoạn tỷ lệ đúng hạn sụt giảm.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>📊</span><span class='vchart-name'>Bar – Tỷ lệ vi phạm SLA theo loại HS &amp; Top dự án chưa đóng</span><span class='tag'>Tổng quan</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Thanh càng dài = tỷ lệ vi phạm cao / số hồ sơ tồn đọng nhiều.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Xếp hạng điểm nóng cần ưu tiên xử lý trước.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>📈</span><span class='vchart-name'>Line/Combo – Số lượng &amp; Thời gian xử lý TB theo thời gian</span><span class='tag'>Trang chi tiết</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Theo dõi biến động khối lượng và thời gian xử lý theo tháng/quý cho từng loại hồ sơ.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Nhận diện xu hướng xấu (thời gian tăng dần) để can thiệp sớm.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>📊</span><span class='vchart-name'>Bar – Thời gian xử lý TB theo dự án / phòng ban</span><span class='tag'>Trang chi tiết</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Xếp hạng dự án và phòng ban theo thời gian xử lý trung bình.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Khoanh vùng đơn vị xử lý chậm để truy nguyên nguyên nhân.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>📊</span><span class='vchart-name'>Combo – Phân bổ số hồ sơ theo dự án / phòng ban</span><span class='tag'>Trang chi tiết</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Cột chồng tách phần Đóng và Không đóng theo từng dự án/phòng ban.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Biết khối lượng tập trung ở đâu và tỷ lệ tồn đọng tương ứng.</div>
+    </div>
+
+    <div class='vchart'>
+      <div class='vchart-head'><span class='vchart-emoji'>🏢</span><span class='vchart-name'>Bar – Đơn vị thụ hưởng đang chờ hoàn tất</span><span class='tag'>Trang chi tiết</span></div>
+      <div class='vchart-row'><b>Đọc:</b> Xếp hạng nhà cung cấp / đơn vị thụ hưởng theo số hồ sơ còn treo.</div>
+      <div class='vchart-row'><b>Giá trị:</b> Hỗ trợ đôn đốc đúng đối tác đang bị ảnh hưởng bởi tồn đọng.</div>
+    </div>
+  </section>
+
+  <!-- 5. PIVOT -->
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>4</div><h2 class='section-title'>Bảng pivot theo giai đoạn &amp; mã màu SLA</h2></div>
+    <p class='lead'>Bảng <strong>Số lượng hồ sơ &amp; Thời gian xử lý TB chi tiết theo giai đoạn</strong> bóc tách quy trình thành từng bước, hiển thị <i>Số lượng HS</i>, <i>Số ngày TB</i> và <i>Số giờ TB</i>. Ô được tô màu theo tỉ lệ SLA của giai đoạn đó:</p>
+    <div class='legend'>
+      <div class='legend-item'><span class='legend-dot' style='background:#FFFFFF;border:1px solid #DDD'></span>Trắng/nhạt – trong hạn</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#FBB' ></span>Đậm dần – tiến gần / vượt ngưỡng</div>
+      <div class='legend-item'><span class='legend-dot' style='background:#FF3100'></span>Đỏ đậm – giai đoạn nút thắt (mất nhiều thời gian nhất)</div>
+    </div>
+    <div class='tip'><span class='tip-icon'>🔍</span><span>Dùng bảng này để <strong>xác định nút thắt (bottleneck)</strong>: giai đoạn có ô đỏ đậm nhất là nơi hồ sơ bị ứ đọng lâu nhất trong quy trình.</span></div>
+  </section>
+
+  <!-- 6. CHI TIET -->
+  <section class='section'>
+    <div class='section-head'><div class='section-num'>6</div><h2 class='section-title'>Trang Chi tiết – tra cứu hồ sơ</h2></div>
+    <p class='lead'>Dùng tính năng <strong>Drill through</strong> để xem bảng dữ liệu gốc ở mức từng hồ sơ, gồm: <strong>Mã approval</strong>, <strong>Mô tả ngắn gọn</strong>, <strong>Nhóm workflow</strong>, <strong>Workflow</strong> (giai đoạn hiện tại) và <strong>Link đến Odoo/Xboss</strong>.</p>
+    <div class='tip'><span class='tip-icon'>🔗</span><span>Cột <strong>Link</strong> dùng để truy cập nhanh trực tiếp hồ sơ trên hệ thống ERP.</span></div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>CC1 – Tổng công ty Xây dựng số 1 – CTCP</strong><br>
+  Tài liệu nội bộ (1/2): Diễn giải chỉ số &amp; biểu đồ · Báo cáo SLA · Power BI · 2026
+</footer>
+
+</body>
+</html>
+"
